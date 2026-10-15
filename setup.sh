@@ -186,6 +186,8 @@ systemctl daemon-reload
 systemctl start podman-restart
 systemctl enable podman-restart
 
+systemctl start podman.socket
+systemctl enable podman.socket
 
 
 
