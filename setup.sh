@@ -164,5 +164,29 @@ for _port in 25 465 587; do
                 echo
 done
 
+# 11. podman启动守护
+echo "[*] 正在添加启动守护服务..."
+cat > /usr/lib/systemd/system/podman-restart.service <<'EOF'
+[Unit]
+Description=Podman Start All Containers With Restart Policy
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/podman start --all --filter restart-policy=always --filter restart-policy=unless-stopped
+ExecStop=/usr/bin/podman stop --all --filter restart-policy=always --filter restart-policy=unless-stopped
+
+[Install]
+WantedBy=default.target
+EOF
+
+systemctl daemon-reload
+systemctl start podman-restart
+systemctl enable podman-restart
+
+
+
 
 echo "[+] NarwhalCloud 初始化及规则配置全部完成！"
